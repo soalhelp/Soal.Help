@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <title>Soal.help</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="sidebar-body">
+    <header class="topbar">
+      <div class="brand">
+        <img src="icons/icon32.png" alt="" />
+        <span>Soal.help</span>
+      </div>
+      <div class="tools">
+        <select id="modelSelect" data-testid="chat-model-select"></select>
+        <button id="clearBtn" class="icon-btn" title="مسح المحادثة" data-testid="chat-clear">↺</button>
+        <button id="settingsBtn" class="icon-btn" title="الإعدادات" data-testid="chat-settings">⚙</button>
+      </div>
+    </header>
+
+    <section id="messages" class="messages" data-testid="chat-messages">
+      <div class="empty-state" id="emptyState">
+        <img src="icons/icon128.png" alt="" />
+        <h2>ابدأ محادثة جديدة</h2>
+        <p>
+          اكتب سؤالك تحت واختار الموديل من الأعلى. الرد بيتم فوتره تلقائي من رصيد
+          حسابك في soal.help — تقدر تشوف التكلفة بعد كل رد.
+        </p>
+        <div class="quick-prompts">
+          <button class="chip" data-prompt="اكتب لي دالة Python بترجع رقم Fibonacci رقم n بشكل متكرر.">مثال كود</button>
+          <button class="chip" data-prompt="لخّصلي أهم 5 أخبار الأسبوع ده في التكنولوجيا.">تلخيص</button>
+          <button class="chip" data-prompt="ترجم الجملة دي للإنجليزية بأسلوب رسمي: 'مرحبًا، أود الاستفسار عن الخدمة.'">ترجمة</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="composer">
+      <div id="statusBar" class="status-bar" data-testid="chat-status"></div>
+      <div class="input-row">
+        <textarea
+          id="promptInput"
+          rows="2"
+          placeholder="اكتب رسالتك هنا... (Enter لإرسال، Shift+Enter لسطر جديد)"
+          data-testid="chat-input"
+        ></textarea>
+        <button id="sendBtn" class="btn primary" data-testid="chat-send">
+          <span class="send-label">إرسال</span>
+        </button>
+      </div>
+      <div class="hint">
+        الرصيد بعد آخر رد:
+        <strong id="lastBalance" data-testid="chat-balance">—</strong>
+      </div>
+    </footer>
+
+    <script src="sidebar.js"></script>
+  </body>
+</html>

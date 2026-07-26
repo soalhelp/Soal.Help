@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+# soal — Codex CLI launcher for Soal.help
+
+set -euo pipefail
+
+ENV_FILE="$HOME/.codex/.env"
+CONFIG_FILE="$HOME/.codex/config.toml"
+
+BOLD=$'\033[1m'; RESET=$'\033[0m'
+CYAN=$'\033[96m'; GREEN=$'\033[92m'
+YELLOW=$'\033[93m'; RED=$'\033[91m'
+
+if [ ! -f "$CONFIG_FILE" ]; then
+  echo -e "${RED}✗ الإعدادات مش موجودة: ${CONFIG_FILE}${RESET}"
+  echo "شغّل install.sh الأول."
+  exit 1
+fi
+
+if [ -f "$ENV_FILE" ]; then
+  __key=$(grep -Eo 'sk-[A-Za-z0-9_-]{20,}' "$ENV_FILE" 2>/dev/null | head -1)
+  [ -n "$__key" ] && export SOAL_API_KEY="$__key"
+  unset __key
+fi
+
+if [ -z "${SOAL_API_KEY:-}" ]; then
+  echo -e "${RED}✗ مفتاح API مش متظبّط.${RESET}"
+  echo -e "شغّل: ${YELLOW}curl -fsSL https://raw.githubusercontent.com/soalhelp/Soal.Help/main/termux/install.sh | bash${RESET}"
+  exit 1
+fi
+
+if ! command -v codex >/dev/null 2>&1; then
+  echo -e "${RED}✗ Codex CLI مش مثبّت.${RESET}"
+  echo "ثبّته: ${YELLOW}npm install -g @mmmbuto/codex-cli-termux@latest${RESET}"
+  exit 1
+fi
+
+declare -a MODELS=(
+  "claude-haiku|claude-haiku-4-5-20251001|Claude Haiku 4.5 (سريع ورخيص)"
+  "claude-sonnet|claude-sonnet-4-5-20250929|Claude Sonnet 4.5 (متوازن)"
+  "claude-sonnet-46|claude-sonnet-4-6|Claude Sonnet 4.6 (أحدث — سياق 1M)"
+  "claude-opus|claude-opus-4-8|Claude Opus 4.8 (أقوى — سياق 1M)"
+  "claude-opus-47|claude-opus-4-7|Claude Opus 4.7 (سياق 1M)"
+  "claude-fable|claude-fable-5|Claude Fable 5 (سياق 1M)"
+  "gpt-mini|gpt-5-mini|GPT-5 Mini (سريع)"
+  "gpt5|gpt-5.5|GPT-5.5 (متقدّم — سياق 1M)"
+  "gpt54|gpt-5.4|GPT-5.4 (سياق 1M)"
+  "gpt-4o|gpt-4o|GPT-4o"
+  "gpt41-mini|gpt-4.1-mini|GPT-4.1 Mini (سياق 1M رخيص)"
+  "o3|o3|O3 (تفكير عميق)"
+  "o4-mini|o4-mini|O4 Mini (تفكير سريع)"
+  "gemini-pro|gemini-3.1-pro-preview|Gemini 3.1 Pro (Preview — سياق 1M)"
+  "gemini-25-pro|gemini-2.5-pro|Gemini 2.5 Pro (سياق 1M)"
+  "gemini-flash|gemini-3.5-flash|Gemini 3.5 Flash (سريع — سياق 1M)"
+  "gemini-flash-3|gemini-3-flash-preview|Gemini 3 Flash (Preview — سياق 1M)"
+  "gemini-25-flash|gemini-2.5-flash|Gemini 2.5 Flash (أرخص)"
+)
+
+lookup_model() {
+  local a="$1"
+  for m in "${MODELS[@]}"; do
+    IFS='|' read -r alias id _label <<< "$m"
+    if [ "$alias" = "$a" ] || [ "$id" = "$a" ]; then
+      echo "$id"
+      return
+    fi
+  done
+  echo "$a"
+}
+
+lookup_profile() {
+  local a="$1"
+  for m in "${MODELS[@]}"; do
+    IFS='|' read -r alias id _label <<< "$m"
+    if [ "$alias" = "$a" ] || [ "$id" = "$a" ]; then
+      echo "$alias"
+      return
+    fi
+  done
+  echo ""
+}
+
+run_codex() {
+  local sel="$1"; shift
+  local profile model_id
+  profile=$(lookup_profile "$sel")
+  model_id=$(lookup_model "$sel")
+  echo -e "${GREEN}→ Model:${RESET} $model_id"
+  if [ -n "$profile" ]; then
+    exec codex --profile "$profile" "$@"
+  else
+    exec codex --model "$model_id" "$@"
+  fi
+}
+
+print_list() {
+  echo -e "${CYAN}${BOLD}الموديلات المتاحة:${RESET}"
+  for m in "${MODELS[@]}"; do
+    IFS='|' read -r alias id label <<< "$m"
+    printf "  ${GREEN}%-16s${RESET} → ${label} ${YELLOW}(%s)${RESET}\n" "$alias" "$id"
+  done
+}
+
+if [ $# -ge 1 ] && [ "$1" = "--list" ]; then
+  print_list
+  exit 0
+fi
+
+if [ $# -ge 1 ] && [[ "$1" != -* ]]; then
+  SEL="$1"; shift
+  run_codex "$SEL" "$@"
+fi
+
+echo -e "${CYAN}${BOLD}اختر موديل Soal.help:${RESET}"
+
+LABELS=()
+ALIASES=()
+for m in "${MODELS[@]}"; do
+  IFS='|' read -r alias id label <<< "$m"
+  LABELS+=("$(printf '%-16s → %s' "$alias" "$label")")
+  ALIASES+=("$alias")
+done
+
+if command -v fzf >/dev/null 2>&1; then
+  sel=$(printf '%s\n' "${LABELS[@]}" | fzf --prompt='> ' --height=40% --reverse) || {
+    echo "اتلغى."; exit 130;
+  }
+  idx=-1
+  for i in "${!LABELS[@]}"; do
+    if [ "${LABELS[$i]}" = "$sel" ]; then
+      idx=$i; break
+    fi
+  done
+  SEL="${ALIASES[$idx]}"
+else
+  for i in "${!LABELS[@]}"; do
+    printf "  %2d) %s\n" $((i+1)) "${LABELS[$i]}"
+  done
+  read -rp "الاختيار [1-${#ALIASES[@]}]: " n
+  if ! [[ "$n" =~ ^[0-9]+$ ]] || [ "$n" -lt 1 ] || [ "$n" -gt "${#ALIASES[@]}" ]; then
+    echo -e "${RED}اختيار مش صحيح${RESET}"; exit 1
+  fi
+  SEL="${ALIASES[$((n-1))]}"
+fi
+
+run_codex "$SEL"

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <title>إعدادات Soal.help</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="options-body">
+    <main class="options-card">
+      <header class="options-header">
+        <img src="icons/icon48.png" alt="" />
+        <div>
+          <h1>إعدادات إضافة Soal.help</h1>
+          <p>احفظ مفتاح API بتاعك والموديل الافتراضي عشان الشات الجانبي يشتغل.</p>
+        </div>
+      </header>
+
+      <label class="field">
+        <span>مفتاح API</span>
+        <input
+          id="apiKey"
+          type="password"
+          placeholder="sk-..."
+          autocomplete="off"
+          data-testid="options-api-key"
+        />
+        <small>
+          اطلعه من صفحة
+          <a href="https://soal.help/app/keys" target="_blank" rel="noopener">مفاتيح API</a>
+          داخل حسابك على soal.help. المفتاح بيتخزّن محليًا في متصفحك فقط.
+        </small>
+      </label>
+
+      <label class="field">
+        <span>عنوان الـ Base URL</span>
+        <input
+          id="baseUrl"
+          type="url"
+          placeholder="https://soal.help/api/v1"
+          data-testid="options-base-url"
+        />
+        <small>غيّره فقط لو عندك سبب — الافتراضي بيروح على الإنتاج مباشرة.</small>
+      </label>
+
+      <label class="field">
+        <span>الموديل الافتراضي</span>
+        <select id="defaultModel" data-testid="options-default-model"></select>
+        <small>هيتحدث لما تحفظ المفتاح صحيح.</small>
+      </label>
+
+      <div class="actions">
+        <button id="save" class="btn primary" data-testid="options-save">حفظ الإعدادات</button>
+        <span id="status" class="status" aria-live="polite"></span>
+      </div>
+
+      <hr />
+
+      <section class="footer-links">
+        <h2>روابط سريعة</h2>
+        <ul>
+          <li>
+            <a href="https://soal.help/app/dashboard" target="_blank" rel="noopener"
+              >لوحة التحكم — رصيد المحفظة</a
+            >
+          </li>
+          <li>
+            <a href="https://soal.help/app/keys" target="_blank" rel="noopener"
+              >مفاتيح API</a
+            >
+          </li>
+          <li>
+            <a href="https://soal.help/docs" target="_blank" rel="noopener"
+              >دليل الربط والتوثيق</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>

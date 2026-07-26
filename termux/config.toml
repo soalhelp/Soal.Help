@@ -1,0 +1,25 @@
+# Soal.help — إعداد Codex CLI
+# https://soal.help/guide
+
+model_provider = "soal"
+model = "claude-haiku-4-5-20251001"
+model_context_window = 200000
+model_auto_compact_token_limit = 180000
+
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
+model_reasoning_effort = "medium"
+model_verbosity = "medium"
+
+project_doc_fallback_filenames = ["README.md", "CONTEXT.md", "AGENTS.md"]
+global_context_files = ["~/.codex/AGENTS.md"]
+
+[model_providers.soal]
+name = "Soal.help"
+base_url = "https://soal.help/api/v1"
+env_key = "SOAL_API_KEY"
+wire_api = "responses"
+
+[projects."/data/data/com.termux/files/home"]
+trust_level = "trusted"

@@ -1,0 +1,57 @@
+{
+  "models": [
+    {
+      "title": "Claude Haiku 4.5 (Soal.help)",
+      "provider": "openai",
+      "model": "claude-haiku-4-5-20251001",
+      "apiKey": "REPLACE_ME_WITH_SK_KEY",
+      "apiBase": "https://soal.help/api/v1"
+    },
+    {
+      "title": "Claude Sonnet 4.6 (Soal.help)",
+      "provider": "openai",
+      "model": "claude-sonnet-4-6",
+      "apiKey": "REPLACE_ME_WITH_SK_KEY",
+      "apiBase": "https://soal.help/api/v1"
+    },
+    {
+      "title": "Claude Opus 4.8 (Soal.help)",
+      "provider": "openai",
+      "model": "claude-opus-4-8",
+      "apiKey": "REPLACE_ME_WITH_SK_KEY",
+      "apiBase": "https://soal.help/api/v1"
+    },
+    {
+      "title": "GPT-5.5 (Soal.help)",
+      "provider": "openai",
+      "model": "gpt-5.5",
+      "apiKey": "REPLACE_ME_WITH_SK_KEY",
+      "apiBase": "https://soal.help/api/v1"
+    },
+    {
+      "title": "GPT-5 mini (Soal.help)",
+      "provider": "openai",
+      "model": "gpt-5-mini",
+      "apiKey": "REPLACE_ME_WITH_SK_KEY",
+      "apiBase": "https://soal.help/api/v1"
+    },
+    {
+      "title": "Gemini 3.1 Pro (Soal.help)",
+      "provider": "openai",
+      "model": "gemini-3.1-pro-preview",
+      "apiKey": "REPLACE_ME_WITH_SK_KEY",
+      "apiBase": "https://soal.help/api/v1"
+    }
+  ],
+  "tabAutocompleteModel": {
+    "title": "Claude Haiku (autocomplete)",
+    "provider": "openai",
+    "model": "claude-haiku-4-5-20251001",
+    "apiKey": "REPLACE_ME_WITH_SK_KEY",
+    "apiBase": "https://soal.help/api/v1"
+  },
+  "embeddingsProvider": {
+    "provider": "free-trial"
+  },
+  "allowAnonymousTelemetry": false
+}

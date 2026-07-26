@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Soal.help — بوابة النماذج",
+  "short_name": "Soal.help",
+  "version": "1.0.0",
+  "description": "شات جانبي داخل المتصفح مع كل موديلات soal.help — GPT · Claude · Gemini بمفتاح واحد.",
+  "default_locale": "ar",
+  "action": {
+    "default_title": "Soal.help",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "sidebar.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "permissions": ["storage", "sidePanel", "contextMenus"],
+  "host_permissions": [
+    "https://soal.help/*"
+  ]
+}

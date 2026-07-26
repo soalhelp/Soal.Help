@@ -1,0 +1,50 @@
+# aichat — إعداد Soal.help
+# https://soal.help/guide
+
+model: soal:claude-haiku-4-5-20251001
+temperature: 0.7
+save: true
+keybindings: emacs
+
+clients:
+  - type: openai-compatible
+    name: soal
+    api_base: https://soal.help/api/v1
+    api_key: REPLACE_ME_WITH_SK_KEY
+    models:
+      - name: claude-haiku-4-5-20251001
+        max_input_tokens: 200000
+      - name: claude-sonnet-4-5-20250929
+        max_input_tokens: 200000
+      - name: claude-sonnet-4-6
+        max_input_tokens: 1000000
+      - name: claude-opus-4-7
+        max_input_tokens: 1000000
+      - name: claude-opus-4-8
+        max_input_tokens: 1000000
+      - name: claude-fable-5
+        max_input_tokens: 1000000
+      - name: gpt-5-mini
+        max_input_tokens: 400000
+      - name: gpt-5.5
+        max_input_tokens: 1000000
+      - name: gpt-5.4
+        max_input_tokens: 1000000
+      - name: gpt-4o
+        max_input_tokens: 128000
+      - name: gpt-4.1-mini
+        max_input_tokens: 1047576
+      - name: o3
+        max_input_tokens: 200000
+      - name: o4-mini
+        max_input_tokens: 200000
+      - name: gemini-2.5-pro
+        max_input_tokens: 1048576
+      - name: gemini-3.1-pro-preview
+        max_input_tokens: 1048576
+      - name: gemini-3.5-flash
+        max_input_tokens: 1048576
+      - name: gemini-3-flash-preview
+        max_input_tokens: 1048576
+      - name: gemini-2.5-flash
+        max_input_tokens: 1048576
