@@ -1,6 +1,6 @@
 # 🐧 Linux & macOS — دليل التثبيت الكامل
 
-> **الفكرة:** هتشغّل موديلات Soal.help من الترمنال باستخدام `aichat` (أداة سريعة بلغة Rust).
+> **الفكرة:** هتشغّل موديلات Soal.help من الترمنال باستخدام **Codex CLI** — الوكيل الرسمي من OpenAI. بيقرأ ملفاتك، بينفّذ أوامر، وبيعدّل الكود عندك مباشرة.
 
 ---
 
@@ -8,14 +8,14 @@
 
 **مش لازم تسطّب أي حاجة بنفسك.** الـ Installer هيعمل كل حاجة لوحده:
 
-| الأداة | إيه هي | حجمها | يتثبّت أوتوماتيك؟ |
-|--------|--------|--------|--------------------|
-| **aichat** | CLI بلغة Rust بيكلم الموديلات | ~10MB | ✅ الـ Installer بيسطّبها |
-| **إعدادات Soal.help** | ملف Config بيربطها بموقعنا | صغير | ✅ الـ Installer بيسطّبها |
-| **Alias `soal`** | اختصار عشان تكتب `soal` بدل `aichat` | — | ✅ الـ Installer بيضيفها |
+| الأداة | إيه هي | يتثبّت أوتوماتيك؟ |
+|--------|--------|--------------------|
+| **Codex CLI** (`@openai/codex`) | وكيل ترمنال بيقرأ ملفاتك وينفّذ أوامر | ✅ الـ Installer بيسطّبه |
+| **إعدادات Soal.help** | `config.toml` + 18 profile للموديلات | ✅ الـ Installer بيكتبها |
+| **Model catalog** | ملف بيشيل تحذير "Unknown model" ويضبط حدود الـ context | ✅ الـ Installer بيكتبه |
 
 يعني كل اللي عليك:
-1. الصق **أمر واحد** في الترمنال (هيسطّب كل الباقي).
+1. الصق **أمر واحد** في الترمنال.
 2. الصق **مفتاح API** بتاعك لما يطلبه.
 
 **خلاص. مفيش أي حاجة تانية.**
@@ -25,188 +25,142 @@
 ## ✅ متطلبات
 
 - 💻 لينكس (Ubuntu / Debian / Fedora / Arch) أو ماك (Intel أو Apple Silicon)
+- 📦 **Node.js** (لو مش مثبت، الـ installer هيقولك تسطّبه)
 - 🌐 اتصال إنترنت
 - 💰 حساب على [soal.help](https://soal.help) بيه رصيد
-- ⏰ 3-5 دقايق
 
 ---
 
 ## 🚀 التثبيت في سطر واحد
 
-افتح الترمنال:
-- **Ubuntu/Debian:** اضغط `Ctrl+Alt+T`
-- **macOS:** اضغط `Cmd+Space` واكتب `Terminal` وا**Enter**
-- **Fedora/Arch:** من قايمة التطبيقات ← Terminal
-
-انسخ الأمر ده كامل والصقه:
+انسخ الأمر ده كامل والصقه في الترمنال:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/soalhelp/Soal.Help/main/linux-macos/install.sh | bash
 ```
 
-**إزاي تلصق في الترمنال:**
-- **لينكس:** اضغط `Ctrl+Shift+V`
-- **ماك:** اضغط `Cmd+V`
-
-اضغط **Enter**.
-
 ---
 
 ## 🔍 اللي هيحصل خطوة خطوة
 
-### الخطوة 1: كشف نظام التشغيل
+### الخطوة 1: التأكد من Node.js
 ```
-[i] النظام: linux    (أو mac)
+[i] Node.js: v22.x.x
 ```
 
-### الخطوة 2: تثبيت `aichat`
-- **على ماك:** الأداة بتيجي من Homebrew (`brew install aichat`). لو Homebrew مش موجود بينزّل الثنائي مباشرة.
-- **على لينكس:** بينزّل الثنائي من GitHub Releases ويحطه في `~/.local/bin/`.
+لو مش مثبّت، هيقولك تسطّبه:
+- **Ubuntu/Debian:** `sudo apt install nodejs npm`
+- **Fedora:** `sudo dnf install nodejs npm`
+- **macOS:** `brew install node`
 
+### الخطوة 2: تثبيت Codex CLI
 ```
-[i] بأثبّت aichat...
-[+] اتثبّت aichat
+[i] بأثبّت @openai/codex...
+[✔] اتثبّت: 0.145.0
 ```
 
 ### الخطوة 3: طلب مفتاح API
-
-الـ installer هيوقف ويطلب منك المفتاح:
-
 ```
 اطلع مفتاح API من: https://soal.help/app/keys
-الصق المفتاح (sk-...):
+الصق مفتاح API:
 ```
 
-**دلوقتي بالظبط اعمل:**
-
-1. **بدون ما تقفل الترمنال**، افتح المتصفح.
-2. روح على: **[https://soal.help/app/keys](https://soal.help/app/keys)**
-3. سجّل دخول لحسابك.
-4. اضغط زرار **إنشاء مفتاح جديد**.
-5. هيظهر مفتاح شكله كده:
-   ```
-   sk-a1b2c3d4e5f6...
-   ```
-6. **اعمل نسخ للمفتاح** (اضغط عليه ← Ctrl+C أو Cmd+C).
-7. **ارجع للترمنال**.
-8. الصق المفتاح (`Ctrl+Shift+V` لينكس، `Cmd+V` ماك).
-9. اضغط **Enter**.
-
-> ⚠️ **مهم:** لما تلصق المفتاح، ممكن يظهر في الترمنال (على عكس Termux). ده عادي.
+- افتح [soal.help/app/keys](https://soal.help/app/keys) في متصفح.
+- اضغط **إنشاء مفتاح جديد** → انسخه.
+- ارجع للترمنال والصقه (`Ctrl+Shift+V` لينكس / `Cmd+V` ماك) → **Enter**.
 
 ### الخطوة 4: كتابة الإعدادات
 ```
-[+] config.yaml → /home/YOU/.config/aichat/config.yaml
+[✔] الإعدادات + 18 profile → /home/YOU/.codex/
 ```
-
-### الخطوة 5: إضافة alias
-الـ installer بيضيف alias `soal` في `.bashrc`/`.zshrc` عشان تقدر تكتب `soal` بدل `aichat`.
 
 ---
 
 ## ✨ التجربة الأولى
 
-**أول حاجة، افتح ترمنال جديد** (أو شغّل `source ~/.bashrc`).
+**افتح ترمنال جديد** (أو شغّل `source ~/.bashrc`).
 
 ```bash
-# جلسة تفاعلية
-aichat
-```
-
-هيفتح REPL بيسألك تكتب سؤالك:
-```
->>> إزيك؟
-[claude-haiku-4-5]
-أهلاً! كل حاجة تمام. إزيك إنت؟
-
->>> _
-```
-
-اكتب `.exit` أو اضغط `Ctrl+D` للخروج.
-
-**استخدامات تانية:**
-
-```bash
-# سؤال سريع (بدون جلسة)
-aichat "قوللي معلومة عن الأهرامات"
+# محادثة تفاعلية على الموديل الافتراضي (Haiku 4.5)
+codex
 
 # اختار موديل معيّن
-aichat -m claude-opus-4-8 "اكتب لي محتوى موقع عن مطاعم القاهرة"
-aichat -m gpt-5.5 "اشرحلي React server components"
-aichat -m gemini-3.1-pro-preview "قوللي فرق GraphQL و REST"
+codex --profile claude-sonnet-46
+codex --profile claude-opus
+codex --profile gpt5
+codex --profile gemini-pro
+```
 
-# استخدم الـ alias المختصر
-soal "أخبار التكنولوجيا النهاردة"
+الوكيل بيقدر يقرأ ملفاتك وينفّذ أوامر في الترمنال:
 
-# pipe: مرّر محتوى ملف
-cat error.log | aichat "لخّص الأخطاء دي وقولي إزاي أصلّحها"
+```
+> اقرأ ملف package.json وقولي إيه الـ dependencies اللي محتاجة تحديث
 
-# مساعدة على كود
-cat main.py | aichat "راجع الكود ده"
-
-# ملف كامل كسياق
-aichat -f main.py "أعد كتابة الدالة الرئيسية"
+• Read package.json
+• Explored dependencies
+• I found 3 outdated packages: react, axios, and moment...
 ```
 
 ---
 
-## 🎨 بديل GUI (لو مش مرتاح للترمنال)
+## 📋 الموديلات المتاحة
 
-**[Chatbox](https://chatboxai.app)** — تطبيق desktop رسومي جميل، متوفر لكل الأنظمة.
+18 موديل جاهزين، كل واحد بـ profile:
 
-**التثبيت:**
-1. نزّل من [chatboxai.app](https://chatboxai.app).
-2. افتح Chatbox.
-3. اضغط الترس (⚙️) → **AI Provider**.
-4. اختار **Custom Provider (OpenAI Compatible)**.
-5. حط الإعدادات:
-   - **API Host:** `https://soal.help/api/v1`
-   - **API Key:** `sk-...` (المفتاح بتاعك)
-   - **Model:** `claude-haiku-4-5-20251001` (أو أي موديل من [القايمة](https://soal.help/api/models))
-6. اضغط **Save**.
-7. اضغط **New Chat** واسأل!
-
-**بدايل تانية بنفس الطريقة:**
-- **[Cherry Studio](https://cherry-ai.com)** — دعم RTL أفضل للعربية
-- **[Jan](https://jan.ai)** — مفتوح المصدر
-- **[NextChat](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web)** — self-hosted
+| Profile | الموديل | السياق |
+|---------|--------|--------|
+| `claude-haiku` | Claude Haiku 4.5 | 200K |
+| `claude-sonnet` | Claude Sonnet 4.5 | 200K |
+| `claude-sonnet-46` | Claude Sonnet 4.6 | 1M |
+| `claude-opus` | Claude Opus 4.8 | 1M |
+| `claude-opus-47` | Claude Opus 4.7 | 1M |
+| `claude-fable` | Claude Fable 5 | 1M |
+| `gpt-mini` | GPT-5 Mini | 400K |
+| `gpt5` | GPT-5.5 | 1M |
+| `gpt54` | GPT-5.4 | 1M |
+| `gpt-4o` | GPT-4o | 128K |
+| `gpt41-mini` | GPT-4.1 Mini | 1M |
+| `o3` | O3 (تفكير عميق) | 200K |
+| `o4-mini` | O4 Mini | 200K |
+| `gemini-pro` | Gemini 3.1 Pro | 1M |
+| `gemini-25-pro` | Gemini 2.5 Pro | 1M |
+| `gemini-flash` | Gemini 3.5 Flash | 1M |
+| `gemini-flash-3` | Gemini 3 Flash | 1M |
+| `gemini-25-flash` | Gemini 2.5 Flash | 1M |
 
 ---
 
 ## 🚨 مشاكل شائعة
 
 <details>
-<summary><b>❌ "aichat: command not found"</b></summary>
+<summary><b>❌ "codex: command not found"</b></summary>
 
 الـ PATH ما اتحدّثش. شغّل:
 ```bash
-source ~/.bashrc     # لينكس
-source ~/.zshrc      # ماك (لو بتستخدم zsh)
+source ~/.bashrc   # أو ~/.zshrc على ماك
 ```
-لو لسّه مش شغال:
+لو npm بيسطّب في مكان مش في الـ PATH، جرّب:
 ```bash
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$(npm bin -g):$PATH"
 ```
 </details>
 
 <details>
-<summary><b>❌ ماك: "brew: command not found"</b></summary>
+<summary><b>❌ "Node.js مش موجود"</b></summary>
 
-Homebrew مش مثبّت. سطّبه الأول:
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
+سطّب Node.js الأول:
+- **Ubuntu/Debian:** `sudo apt install nodejs npm`
+- **Fedora:** `sudo dnf install nodejs npm`
+- **Arch:** `sudo pacman -S nodejs npm`
+- **macOS:** `brew install node`
+
 بعدها شغّل الـ installer تاني.
 </details>
 
 <details>
-<summary><b>❌ "Authentication failed" لما بشغّل aichat</b></summary>
+<summary><b>❌ "Authentication failed"</b></summary>
 
-المفتاح غلط أو انتهت صلاحيته. **مش لازم تعدّل أي ملف يدوي** — شغّل الـ installer تاني بمفتاح جديد:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/soalhelp/Soal.Help/main/linux-macos/install.sh | bash
-```
+المفتاح غلط أو منتهي. شغّل الـ installer تاني هيسألك عن مفتاح جديد.
 </details>
 
 <details>
@@ -219,9 +173,10 @@ curl -fsSL https://raw.githubusercontent.com/soalhelp/Soal.Help/main/linux-macos
 
 ## 🔄 عايز تغيّر المفتاح؟
 
-مش محتاج تعدّل أي ملف يدوي — **شغّل الـ installer تاني**:
+امسح ملف الـ env وشغّل تاني:
 
 ```bash
+rm ~/.codex/.env
 curl -fsSL https://raw.githubusercontent.com/soalhelp/Soal.Help/main/linux-macos/install.sh | bash
 ```
 
@@ -229,16 +184,9 @@ curl -fsSL https://raw.githubusercontent.com/soalhelp/Soal.Help/main/linux-macos
 
 ## 🧹 إلغاء التثبيت
 
-**ماك (Homebrew):**
 ```bash
-brew uninstall aichat
-rm -rf ~/Library/Application\ Support/aichat
+npm uninstall -g @openai/codex
+rm -rf ~/.codex
 ```
 
-**لينكس (ثنائي مباشر):**
-```bash
-rm ~/.local/bin/aichat
-rm -rf ~/.config/aichat
-```
-
-بعد كده احذف السطر `alias soal='aichat'` من `.bashrc` أو `.zshrc`.
+بعدين احذف السطر اللي فيه `.codex/.env` من `~/.bashrc` أو `~/.zshrc`.
