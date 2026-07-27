@@ -1,4 +1,4 @@
 model_provider = "soal"
 model = "gemini-3.1-pro-preview"
 model_context_window = 1048576
-model_auto_compact_token_limit = 940000
+model_auto_compact_token_limit = 700000

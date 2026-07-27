@@ -1,4 +1,4 @@
 model_provider = "soal"
 model = "claude-sonnet-4-5-20250929"
 model_context_window = 200000
-model_auto_compact_token_limit = 180000
+model_auto_compact_token_limit = 140000

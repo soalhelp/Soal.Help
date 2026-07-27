@@ -1,4 +1,4 @@
 model_provider = "soal"
 model = "claude-haiku-4-5-20251001"
 model_context_window = 200000
-model_auto_compact_token_limit = 180000
+model_auto_compact_token_limit = 140000
