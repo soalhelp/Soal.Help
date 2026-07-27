@@ -16,23 +16,29 @@ if [ ! -f "$CONFIG_FILE" ]; then
   exit 1
 fi
 
-if [ -f "$ENV_FILE" ]; then
-  __key=$(grep -Eo 'sk-[A-Za-z0-9_-]{20,}' "$ENV_FILE" 2>/dev/null | head -1)
-  [ -n "$__key" ] && export SOAL_API_KEY="$__key"
-  unset __key
-fi
+# Meta commands don't need an API key or codex binary
+case "${1:-}" in
+  --help|-h|help|--list|list|reasoning|default|set-default) ;;
+  *)
+    if [ -f "$ENV_FILE" ]; then
+      __key=$(grep -Eo 'sk-[A-Za-z0-9_-]{20,}' "$ENV_FILE" 2>/dev/null | head -1)
+      [ -n "$__key" ] && export SOAL_API_KEY="$__key"
+      unset __key
+    fi
 
-if [ -z "${SOAL_API_KEY:-}" ]; then
-  echo -e "${RED}✗ مفتاح API مش متظبّط.${RESET}"
-  echo -e "شغّل: ${YELLOW}curl -fsSL https://raw.githubusercontent.com/soalhelp/Soal.Help/main/termux/install.sh | bash${RESET}"
-  exit 1
-fi
+    if [ -z "${SOAL_API_KEY:-}" ]; then
+      echo -e "${RED}✗ مفتاح API مش متظبّط.${RESET}"
+      echo -e "شغّل: ${YELLOW}curl -fsSL https://raw.githubusercontent.com/soalhelp/Soal.Help/main/termux/install.sh | bash${RESET}"
+      exit 1
+    fi
 
-if ! command -v codex >/dev/null 2>&1; then
-  echo -e "${RED}✗ Codex CLI مش مثبّت.${RESET}"
-  echo "ثبّته: ${YELLOW}npm install -g @mmmbuto/codex-cli-termux@latest${RESET}"
-  exit 1
-fi
+    if ! command -v codex >/dev/null 2>&1; then
+      echo -e "${RED}✗ Codex CLI مش مثبّت.${RESET}"
+      echo "ثبّته: ${YELLOW}npm install -g @mmmbuto/codex-cli-termux@latest${RESET}"
+      exit 1
+    fi
+    ;;
+esac
 
 declare -a MODELS=(
   "claude-haiku|claude-haiku-4-5-20251001|Claude Haiku 4.5 (سريع ورخيص)"
@@ -100,9 +106,87 @@ print_list() {
   done
 }
 
-if [ $# -ge 1 ] && [ "$1" = "--list" ]; then
-  print_list
-  exit 0
+set_reasoning() {
+  local level="$1"
+  case "$level" in
+    minimal|low|medium|high) ;;
+    *)
+      echo -e "${RED}✗ قيمة غير صحيحة: $level${RESET}"
+      echo "المتاح: minimal | low | medium | high"
+      exit 1
+      ;;
+  esac
+  if [ ! -f "$CONFIG_FILE" ]; then
+    echo -e "${RED}✗ $CONFIG_FILE مش موجود${RESET}"
+    exit 1
+  fi
+  if grep -q '^model_reasoning_effort' "$CONFIG_FILE"; then
+    sed -i.tmp "s|^model_reasoning_effort.*|model_reasoning_effort = \"$level\"|" "$CONFIG_FILE" 2>/dev/null || \
+      sed -i '' "s|^model_reasoning_effort.*|model_reasoning_effort = \"$level\"|" "$CONFIG_FILE"
+    rm -f "$CONFIG_FILE.tmp"
+  else
+    printf '\nmodel_reasoning_effort = "%s"\n' "$level" >> "$CONFIG_FILE"
+  fi
+  echo -e "${GREEN}✓ reasoning_effort = ${BOLD}$level${RESET}"
+}
+
+set_default_model() {
+  local alias="$1"
+  local model_id
+  model_id=$(lookup_model "$alias")
+  if [ "$model_id" = "$alias" ] && ! grep -qE "\\|${alias}\\|" <<< "$(printf '%s\n' "${MODELS[@]}")"; then
+    echo -e "${RED}✗ Alias مش موجود: $alias${RESET}"
+    echo "شوف القائمة: soal --list"
+    exit 1
+  fi
+  if grep -qE '^model\s*=' "$CONFIG_FILE"; then
+    sed -i.tmp "s|^model\s*=.*|model = \"$model_id\"|" "$CONFIG_FILE" 2>/dev/null || \
+      sed -i '' "s|^model\s*=.*|model = \"$model_id\"|" "$CONFIG_FILE"
+    rm -f "$CONFIG_FILE.tmp"
+  else
+    printf '\nmodel = "%s"\n' "$model_id" >> "$CONFIG_FILE"
+  fi
+  echo -e "${GREEN}✓ الموديل الافتراضي: ${BOLD}$model_id${RESET}"
+}
+
+print_help() {
+  cat <<EOF
+${CYAN}${BOLD}soal — Codex CLI launcher for Soal.help${RESET}
+
+الاستخدام:
+  ${GREEN}soal${RESET}                        قائمة تفاعلية لاختيار موديل
+  ${GREEN}soal <alias>${RESET}                يشغّل الموديل ده مباشرة
+  ${GREEN}soal <alias> "prompt"${RESET}       يشغّله بسؤال
+  ${GREEN}soal --list${RESET}                 يعرض كل الـ 18 موديل
+  ${GREEN}soal reasoning <level>${RESET}      يضبط عمق التفكير (minimal|low|medium|high)
+  ${GREEN}soal default <alias>${RESET}        يخلي الموديل ده هو الافتراضي
+  ${GREEN}soal --help${RESET}                 يعرض المساعدة دي
+
+أمثلة:
+  ${YELLOW}soal claude-opus${RESET}
+  ${YELLOW}soal gpt5 "اكتب لي مقال عن مصر"${RESET}
+  ${YELLOW}soal reasoning high${RESET}          # للـ O3/O4-Mini/GPT-5 (reasoning models)
+  ${YELLOW}soal default claude-sonnet-46${RESET}  # يبقى هو اللي يفتح لما تكتب codex
+
+الرصيد: ${CYAN}https://soal.help/app/dashboard${RESET}
+EOF
+}
+
+if [ $# -ge 1 ]; then
+  case "$1" in
+    --list|list)
+      print_list; exit 0 ;;
+    --help|-h|help)
+      print_help; exit 0 ;;
+    reasoning)
+      shift
+      [ $# -eq 0 ] && { echo "الاستخدام: soal reasoning <minimal|low|medium|high>"; exit 1; }
+      set_reasoning "$1"; exit 0 ;;
+    default|set-default)
+      shift
+      [ $# -eq 0 ] && { echo "الاستخدام: soal default <alias>"; exit 1; }
+      set_default_model "$1"; exit 0 ;;
+  esac
 fi
 
 if [ $# -ge 1 ] && [[ "$1" != -* ]]; then

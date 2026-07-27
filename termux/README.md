@@ -93,6 +93,16 @@ soal gpt5 "اكتب دالة Python"  # يشغّل GPT-5.5 + prompt
 codex --profile gemini-pro    # أو استخدم الـ profile مباشرة
 ```
 
+**أوامر إضافية:**
+```bash
+soal --help                       # قائمة الأوامر
+soal --list                       # كل الـ 18 موديل مع أسماءها
+soal reasoning high               # يضبط عمق التفكير (minimal|low|medium|high)
+soal default claude-sonnet-46     # يخلي ده الموديل الافتراضي لـ codex
+```
+
+**ملاحظة عن `/model` جوّه Codex:** الأمر ده أحيانًا بيدمج قائمة Codex الداخلية مع قائمتنا وبيوريلك موديلات مش متاحة عندنا. **الحل الصح:** اقفل الجلسة (`/exit`) وافتح الموديل مباشرة بـ `soal <alias>` أو `codex --profile <alias>`، أو غيّر الافتراضي مرة واحدة بـ `soal default <alias>`.
+
 ---
 
 ## 💡 اختار الموديل الصح لمشروعك
