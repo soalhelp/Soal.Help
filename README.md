@@ -29,8 +29,8 @@ GPT, Gemini, Sora, Nano Banana — بحساب واحد ومحفظة واحدة �
 
 | الجهاز        | الأداة              | التثبيت |
 |---------------|---------------------|---------|
-| 🐧 لينكس / ماك | `aichat` (Terminal) | [linux-macos/](linux-macos/) |
-| 🖥️ ويندوز    | `aichat` (PowerShell)| [windows/](windows/) |
+| 🐧 لينكس / ماك | Codex CLI (Terminal)| [linux-macos/](linux-macos/) |
+| 🖥️ ويندوز    | Codex CLI (PowerShell)| [windows/](windows/) |
 | 📱 أندرويد   | Codex CLI (Termux)  | [termux/](termux/) |
 | 🌐 كروم/إدج   | Side Panel Extension| [chrome-extension/](chrome-extension/) |
 | ⌨️ VSCode/Cursor| Continue.dev       | [vscode-cursor/](vscode-cursor/) |
@@ -49,8 +49,8 @@ This repo packages ready-to-use clients for every platform:
 
 | Platform      | Client              | Install |
 |---------------|---------------------|---------|
-| 🐧 Linux / Mac| `aichat` (Terminal) | [linux-macos/](linux-macos/) |
-| 🖥️ Windows   | `aichat` (PowerShell)| [windows/](windows/) |
+| 🐧 Linux / Mac| Codex CLI (Terminal)| [linux-macos/](linux-macos/) |
+| 🖥️ Windows   | Codex CLI (PowerShell)| [windows/](windows/) |
 | 📱 Android    | Codex CLI (Termux)  | [termux/](termux/) |
 | 🌐 Chrome/Edge| Side Panel Extension| [chrome-extension/](chrome-extension/) |
 | ⌨️ VSCode/Cursor| Continue.dev       | [vscode-cursor/](vscode-cursor/) |
@@ -120,7 +120,9 @@ soal                           # قائمة تفاعلية بـ fzf
 <details>
 <summary><b>افتح للتفاصيل / Click to expand</b></summary>
 
-**سطر واحد يسطّبلك كل حاجة** — يثبّت [aichat](https://github.com/sigoden/aichat) ويظبّطه على soal.help.
+**سطر واحد يسطّبلك كل حاجة** — يثبّت [Codex CLI](https://github.com/openai/codex) ويظبّطه على soal.help (18 موديل جاهزين).
+
+**متطلب:** Node.js مثبّت (`sudo apt install nodejs npm` أو `brew install node`).
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/soalhelp/Soal.Help/main/linux-macos/install.sh | bash
@@ -128,17 +130,16 @@ curl -fsSL https://raw.githubusercontent.com/soalhelp/Soal.Help/main/linux-macos
 
 بعد التثبيت:
 ```bash
-# جلسة تفاعلية
-aichat
-
-# سؤال سريع
-aichat "قوللي معلومة عن الأهرامات"
+# محادثة تفاعلية (بيقرا ملفاتك وينفّذ أوامر)
+codex
 
 # اختار موديل معيّن
-aichat -m claude-opus-4-8 "اكتب قصيدة عن القاهرة"
+codex --profile claude-sonnet-46
+codex --profile gpt5
+codex --profile gemini-pro
 
-# pipe input
-cat main.py | aichat "راجع الكود ده"
+# اسأل مباشرة
+codex --profile claude-opus "راجع الكود في هذا المجلد"
 ```
 
 [📖 الدليل التفصيلي](linux-macos/)
@@ -159,12 +160,13 @@ Set-ExecutionPolicy -Scope Process Bypass -Force
 iwr -useb https://raw.githubusercontent.com/soalhelp/Soal.Help/main/windows/install.ps1 | iex
 ```
 
-الـ installer هيحاول يستخدم `winget` أو `scoop` أو `cargo` — لو مفيش، بيحمّل الثنائي مباشرة من GitHub Releases.
+الـ installer بيثبّت **Codex CLI** عبر npm (محتاج Node.js — `winget install OpenJS.NodeJS.LTS`).
 
 بعد التثبيت افتح **PowerShell جديد** وجرّب:
 ```powershell
-aichat "hello!"
-aichat -m gpt-5.5 "شرح React hooks"
+codex
+codex --profile claude-sonnet-46
+codex --profile gpt5
 ```
 
 **بديل GUI جاهز:** لو مش عايز terminal، حمّل [Chatbox](https://chatboxai.app) — واجهة رسومية مدعومة لويندوز/ماك/لينكس. من **Settings → API Provider → Custom OpenAI Compatible**:
@@ -298,7 +300,7 @@ curl -X POST https://soal.help/api/v1/chat/completions \
 soal-help/
 ├─ chrome-extension/     ← إضافة كروم Manifest V3 كاملة
 ├─ termux/               ← Codex CLI + config + launcher + doctor + reset
-├─ linux-macos/          ← aichat installer + config
+├─ linux-macos/          ← Codex CLI installer + config
 ├─ windows/              ← PowerShell installer + config
 ├─ vscode-cursor/        ← Continue.dev config.json
 ├─ examples/             ← أمثلة curl / Python / Node.js
